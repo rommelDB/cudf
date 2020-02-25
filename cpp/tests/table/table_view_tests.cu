@@ -70,6 +70,26 @@ TEST_F(TableViewTest, TestLexicographicalComparatorTwoTableCase)
     cudf::test::expect_columns_equal(expected, got->view());
 }
 
+TEST_F(TableViewTest, TestLexicographicalComparatorTwoTableCaseStrings)
+{
+    cudf::test::strings_column_wrapper column1({"N", "NULL", "N", "N", "Y", "Y", "Y", "Y"},
+                                              {1, 0, 1, 1, 1, 1, 1, 1});
+
+    cudf::test::strings_column_wrapper column2({"Y", "Y", "Y", "Y", "N", "N", "N", "N"},
+                                              {1, 1, 1, 1, 1, 1, 1, 1});
+
+    std::vector<cudf::order> column_order {cudf::order::DESCENDING};
+
+    cudf::table_view input_table_1 {{column1}};
+    cudf::table_view input_table_2 {{column2}};
+
+    auto got = cudf::make_numeric_column(cudf::data_type(cudf::INT8), input_table_1.num_rows(), cudf::mask_state::UNALLOCATED);
+    cudf::test::fixed_width_column_wrapper<int8_t> expected {{0, 0, 0, 0, 1, 1, 1, 1}};
+    row_comparison(input_table_1, input_table_2, got->mutable_view(), column_order);
+
+    cudf::test::expect_columns_equal(expected, got->view());
+}
+
 TEST_F(TableViewTest, TestLexicographicalComparatorSameTable)
 {
     cudf::test::fixed_width_column_wrapper<int16_t> col1 {{1, 2, 3, 4}};

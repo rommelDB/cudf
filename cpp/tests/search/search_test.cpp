@@ -226,6 +226,105 @@ TEST_F(SearchTest, nullable_column__find_last__nulls_as_largest)
   expect_columns_equal(*result, expect);
 }
 
+TEST_F(SearchTest, nullable_column__find_last__nulls_as_largest2)
+{
+  using element_type = int64_t;
+
+  fixed_width_column_wrapper<element_type>   column1 { { 0, 0, 0, 0, 1, 1, 1, 1 },
+                                                      {  1,  1,  1,  1,  1,  1,  1, 1 } };
+  fixed_width_column_wrapper<element_type>   column2 { { 0, 0, 1, 1, 0, 0, 1, 1 },
+                                                      {  1,  1,  1,  1,  1,  1,  1, 1 } };
+  fixed_width_column_wrapper<element_type>   column3 { { 0, 1, 0, 1, 0, 1, 0, 1 },
+                                                      {  1,  1,  1,  1,  1,  1,  1, 1 } };
+
+  fixed_width_column_wrapper<element_type>   values1 { {  0, 0, 0, 0, 0 },
+                                                      {  1,  1,  1,  1,  1} };
+  fixed_width_column_wrapper<element_type>   values2 { {  0, 0, 1, 1, 1 },
+                                                      {  1,  1,  1,  1,  1} };
+  fixed_width_column_wrapper<element_type>   values3 { {  1, 2, 0, 1, 2 },
+                                                      {  1,  0,  1,  1,  0} };
+
+  fixed_width_column_wrapper<size_type>      expect {  2, 2, 3, 4, 4};
+    
+  std::unique_ptr<cudf::column> result{};
+
+  EXPECT_NO_THROW(
+                  result = cudf::experimental::upper_bound(
+                                                           {cudf::table_view{{column1, column2, column3}}},
+                                                           {cudf::table_view{{values1, values2, values3}}},
+                                                           {cudf::order::ASCENDING, cudf::order::ASCENDING, cudf::order::ASCENDING},
+                                                           {cudf::null_order::AFTER, cudf::null_order::AFTER, cudf::null_order::AFTER})
+                  );
+
+  expect_columns_equal(*result, expect);
+}
+
+TEST_F(SearchTest, nullable_column__find_last__nulls_as_largest3)
+{
+  cudf::test::strings_column_wrapper column1({"N", "N", "N", "N", "Y", "Y", "Y", "Y"},
+                                              {1, 1, 1, 1, 1, 1, 1, 1});
+
+  cudf::test::strings_column_wrapper column2({"N", "N", "Y", "Y", "N", "N", "Y", "Y"},
+                                              {1, 1, 1, 1, 1, 1, 1, 1});
+
+  cudf::test::strings_column_wrapper column3({"N", "Y", "N", "Y", "N", "Y", "N", "Y"},
+                                              {1, 1, 1, 1, 1, 1, 1, 1});
+
+
+  cudf::test::strings_column_wrapper values1({"N", "N", "N", "N", "N"},
+                                              {1, 1, 1, 1, 1});
+
+  cudf::test::strings_column_wrapper values2({"N", "N", "Y", "Y", "Y"},
+                                              {1, 1, 1, 1, 1});
+
+  cudf::test::strings_column_wrapper values3({"Y", "Z", "N", "Y", "Z"},
+                                              {1, 0, 1, 1, 0});
+
+  fixed_width_column_wrapper<size_type>      expect {  2, 2, 3, 4, 4};
+    
+  std::unique_ptr<cudf::column> result{};
+
+  EXPECT_NO_THROW(
+                  result = cudf::experimental::upper_bound(
+                                                           {cudf::table_view{{column1, column2, column3}}},
+                                                           {cudf::table_view{{values1, values2, values3}}},
+                                                           {cudf::order::ASCENDING, cudf::order::ASCENDING, cudf::order::ASCENDING},
+                                                           {cudf::null_order::AFTER, cudf::null_order::AFTER, cudf::null_order::AFTER})
+                  );
+
+  expect_columns_equal(*result, expect);
+}
+
+TEST_F(SearchTest, nullable_column__find_last__nulls_as_largest4)
+{
+  cudf::test::strings_column_wrapper column1({"N", "N"},
+                                              {1, 1});
+
+  cudf::test::strings_column_wrapper column2({"N", "Y"},
+                                              {1, 1});
+
+
+  cudf::test::strings_column_wrapper values1({"N", "N"},
+                                              {1, 1});
+
+  cudf::test::strings_column_wrapper values2({"Y", "Z"},
+                                              {1, 0});
+
+  fixed_width_column_wrapper<size_type>      expect { 2, 2};
+    
+  std::unique_ptr<cudf::column> result{};
+
+  EXPECT_NO_THROW(
+                  result = cudf::experimental::upper_bound(
+                                                           {cudf::table_view{{column1, column2}}},
+                                                           {cudf::table_view{{values1, values2}}},
+                                                           {cudf::order::ASCENDING, cudf::order::ASCENDING},
+                                                           {cudf::null_order::AFTER, cudf::null_order::AFTER})
+                  );
+
+  expect_columns_equal(*result, expect);
+}
+
 TEST_F(SearchTest, nullable_column__find_first__nulls_as_largest)
 {
   using element_type = int64_t;
