@@ -22,6 +22,7 @@
 - PR #4164 Add Buffer "constructor-kwargs" header
 - PR #4159 Add COUNT aggregation that includes null values
 - PR #4190 Add libcudf++ transpose Cython implementation
+- PR #4217 Add libcudf++ quantiles Cython implementation
 - PR #4216 Add cudf.Scalar Python type
 
 ## Improvements
@@ -76,6 +77,7 @@
 - PR #4105 Change threshold of using optimized hash partition code
 - PR #4101 Redux serialize `Buffer` directly with `__cuda_array_interface__`
 - PR #4098 Remove legacy calls from libcudf strings column code
+- PR #4044 Port join.pyx to use libcudf++ APIs
 - PR #4111 Use `Buffer`'s to serialize `StringColumn`
 - PR #4133 Mask cleanup and fixes: use `int32` dtype, ensure 64 byte padding, handle offsets
 - PR #4113 Get `len` of `StringColumn`s without `nvstrings`
@@ -87,6 +89,8 @@
 - PR #4144 Release GIL when calling libcudf++ functions
 - PR #4082 Rework MultiColumns in cuDF
 - PR #4149 Use "type-serialized" for pickled types like Dask
+- PR #4174 Port hash groupby to libcudf++
+- PR #4171 Split java host and device vectors to make a vector truly immutable
 - PR #4167 Port `search` to libcudf++ (support multi-column searchsorted)
 - PR #4163 Assert Dask CUDA serializers have `Buffer` frames
 - PR #4165 List serializable classes once
@@ -98,8 +102,10 @@
 - PR #4191 Porting sort.pyx to use new libcudf APIs
 - PR #4196 reduce CHANGELOG.md merge conflicts
 - PR #4197 Added notebook testing to gpuCI gpu build
+- PR #4204 Port nvtext create-ngrams function
 - PR #4219 Port dlpack.pyx to use new libcudf APIs
 - PR #4225 Remove stale notebooks
+- PR #4233 Porting replace.pyx to use new libcudf APIs
 - PR #4223 Fix a few of the Cython warnings
 - PR #4234 Add BUILD_LEGACY_TESTS cmake option
 
@@ -159,7 +165,9 @@
 - PR #4214 Alter ValueError exception for GPU accelerated Parquet writer to properly report `categorical` columns are not supported.
 - PR #4232 Fix handling empty tuples of children in string columns
 - PR #4222 Fix no-return compile error in binop-null-test
+- PR #4242 Fix for rolling tests CI failure
 - PR #4245 Fix race condition in parquet reader
+- PR #4258 Fix dask-cudf losing index name in `reset_index`
 
 
 # cuDF 0.12.0 (04 Feb 2020)
